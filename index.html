@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<!-- SECURITY METATAGS -->
+<!-- 1. CSP: Restricts where scripts, styles, and images can load from. Blocks malicious injections and Clickjacking -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';">
+<!-- 2. Prevent MIME-sniffing -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<!-- 3. Strict Referrer Policy -->
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<title>Allen Clint Dionisio — D365 / Power Platform QA Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0e17;
+    --bg-2: #0d121e;
+    --panel: #11172480;
+    --panel-solid: #111826;
+    --border: #1e2636;
+    --border-soft: #1a212f;
+    --teal: #2dd4bf;
+    --teal-dim: #2dd4bf99;
+    --violet: #8b7cf6;
+    --amber: #f5a94e;
+    --text: #eef2f6;
+    --text-dim: #94a3b8;
+    --text-faint: #5b6579;
+    --radius: 12px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth; -webkit-text-size-adjust:100%; text-size-adjust:100%;}
+
+  body{
+    padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right);
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* subtle grid backdrop */
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .glow{
+    position:fixed;
+    top:-200px; left:50%;
+    transform:translateX(-50%);
+    width:900px; height:600px;
+    background:radial-gradient(ellipse at center, rgba(45,212,191,0.10), transparent 65%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px; position:relative; z-index:1;}
+
+  code, .mono{font-family:'JetBrains Mono', monospace;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(10,14,23,0.78);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border-soft);
+  }
+  nav.navbar{
+    max-width:1180px; margin:0 auto; padding:18px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:20px; letter-spacing:0.5px;
+    color:var(--text);
+  }
+  .logo span{color:var(--teal);}
+  .navlinks{display:flex; gap:4px; align-items:center;}
+  .navlinks a{
+    font-size:14.5px; font-weight:500; color:var(--text-dim);
+    padding:9px 16px; border-radius:8px; transition:all .2s ease;
+    position:relative;
+  }
+  .navlinks a:hover{color:var(--text);}
+  .navlinks a.active{color:var(--teal); background:rgba(45,212,191,0.08);}
+  .nav-cv-btn{
+    display:flex !important; align-items:center; gap:7px;
+    background:var(--teal) !important; color:#04120f !important;
+    font-weight:600 !important; margin-left:8px;
+    padding:9px 16px !important; border-radius:8px;
+    transition:all .2s ease;
+  }
+  .nav-cv-btn:hover{background:#5eead4 !important; transform:translateY(-1px);}
+  .menu-btn{
+    display:none; background:none; border:1px solid var(--border); border-radius:8px;
+    color:var(--text); width:40px; height:40px; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .menu-btn svg{width:20px; height:20px;}
+
+  /* ---------- SECTION SHELL ---------- */
+  section{position:relative; z-index:1; padding:110px 0; scroll-margin-top:78px;}
+  section.tight{padding:70px 0 110px;}
+
+  .eyebrow{
+    display:flex; align-items:center; gap:16px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--teal); font-weight:500;
+    margin-bottom:44px;
+  }
+  .eyebrow::after{
+    content:''; flex:1; height:1px;
+    background:linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{padding:96px 0 70px; position:relative;}
+  .badge{
+    display:inline-flex; align-items:center; gap:9px;
+    border:1px solid rgba(45,212,191,0.35);
+    background:rgba(45,212,191,0.06);
+    color:var(--teal);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px; letter-spacing:1.4px;
+    padding:8px 18px; border-radius:100px;
+    margin-bottom:34px;
+  }
+  .badge .dot{
+    width:7px; height:7px; border-radius:50%; background:var(--teal);
+    box-shadow:0 0 0 0 rgba(45,212,191,0.6);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(45,212,191,0.5);}
+    70%{box-shadow:0 0 0 8px rgba(45,212,191,0);}
+    100%{box-shadow:0 0 0 0 rgba(45,212,191,0);}
+  }
+
+  .hero-grid{display:grid; grid-template-columns:1.6fr 1fr; gap:60px; align-items:start;}
+
+  h1.name{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:clamp(44px, 6vw, 76px);
+    line-height:1.03;
+    letter-spacing:-1.5px;
+    color:var(--text);
+  }
+  h1.name .accent{color:var(--teal);}
+
+  .role{
+    font-size:clamp(19px,2vw,24px);
+    color:#a5b4d4;
+    font-weight:500;
+    margin:26px 0 22px;
+  }
+
+  .lede{
+    font-size:16.5px; color:var(--text-dim); max-width:640px; line-height:1.75;
+  }
+  .lede b{color:var(--text); font-weight:600;}
+  .lede .hl{color:var(--teal); font-weight:600;}
+
+  .hero-ctas{display:flex; gap:14px; margin-top:38px;}
+  .btn{
+    font-family:'Inter', sans-serif; font-weight:600; font-size:14.5px;
+    padding:14px 26px; border-radius:9px; cursor:pointer;
+    border:1px solid transparent; transition:all .2s ease;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-primary{background:var(--teal); color:#04120f;}
+  .btn-primary:hover{background:#5eead4; transform:translateY(-1px); box-shadow:0 8px 24px -8px rgba(45,212,191,0.5);}
+  .btn-ghost{background:transparent; border-color:var(--border); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--teal-dim); background:rgba(45,212,191,0.05);}
+
+  .stat-col{display:flex; flex-direction:column; gap:14px;}
+  .stat-card{
+    background:var(--panel-solid); border:1px solid var(--border);
+    border-radius:var(--radius); padding:22px 24px;
+    transition:transform .25s ease, border-color .25s ease;
+  }
+  .stat-card:hover{transform:translateY(-3px); border-color:rgba(45,212,191,0.3);}
+  .stat-num{
+    font-family:'Space Grotesk', sans-serif; font-weight:700;
+    font-size:32px; color:var(--teal); line-height:1;
+  }
+  .stat-label{font-size:13.5px; color:var(--text-dim); margin-top:8px;}
+
+  .scroll-cue{
+    text-align:center; margin-top:80px;
+    font-family:'JetBrains Mono', monospace; font-size:11.5px;
+    letter-spacing:3px; color:var(--text-faint);
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .scroll-cue .line{width:1px; height:34px; background:linear-gradient(var(--text-faint), transparent); animation:drop 1.8s ease-in-out infinite;}
+  @keyframes drop{0%{opacity:0; transform:translateY(-6px);} 50%{opacity:1;} 100%{opacity:0; transform:translateY(10px);}}
+
+  /* ---------- REVEAL ---------- */
+  .reveal{opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  /* ---------- EXPERTISE ---------- */
+  .card-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;}
+  .exp-card{
+    background:var(--panel-solid); border:1px solid var(--border);
+    border-top:2px solid var(--border);
+    border-radius:10px; padding:28px 26px;
+    transition:transform .25s ease, border-color .25s ease, background .25s ease;
+    cursor:default;
+  }
+  .exp-card:hover{transform:translateY(-4px); background:#131b28;}
+  .exp-card.c-teal{border-top-color:var(--teal);}
+  .exp-card.c-violet{border-top-color:var(--violet);}
+  .icon-box{
+    width:38px; height:38px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:18px;
+  }
+  .exp-card.c-teal .icon-box{color:var(--teal);}
+  .exp-card.c-violet .icon-box{color:var(--violet);}
+  .exp-card h3{font-size:16.5px; font-weight:600; margin-bottom:10px; color:var(--text);}
+  .exp-card p{font-size:14px; color:var(--text-dim); line-height:1.65;}
+  .exp-card p b{color:#c7d2e8; font-weight:600;}
+
+  /* ---------- EXPERIENCE TIMELINE ---------- */
+  .timeline{position:relative; padding-left:34px;}
+  .timeline::before{
+    content:''; position:absolute; left:5px; top:8px; bottom:8px; width:1px;
+    background:linear-gradient(var(--border), var(--border) 90%, transparent);
+  }
+  .tl-item{position:relative; margin-bottom:26px;}
+  .tl-dot{
+    position:absolute; left:-34px; top:26px; width:11px; height:11px; border-radius:50%;
+    box-shadow:0 0 0 4px var(--bg);
+  }
+  .tl-dot.d-teal{background:var(--teal);}
+  .tl-dot.d-violet{background:var(--violet);}
+  .tl-dot.d-amber{background:var(--amber);}
+  .tl-dot.d-grey{background:#5b6579;}
+  .tl-dot.d-green{background:#4ade80;}
+
+  .tl-card{
+    background:var(--panel-solid); border:1px solid var(--border);
+    border-left:3px solid var(--teal);
+    border-radius:10px; padding:26px 28px;
+    transition:border-color .25s ease, transform .25s ease;
+  }
+  .tl-card:hover{transform:translateX(4px);}
+  .tl-card.b-violet{border-left-color:var(--violet);}
+  .tl-card.b-amber{border-left-color:var(--amber);}
+  .tl-card.b-grey{border-left-color:#4b5568;}
+  .tl-card.b-green{border-left-color:#4ade80;}
+
+  .tl-top{display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap;}
+  .tl-role{font-size:17.5px; font-weight:600; color:var(--text);}
+  .tl-org{font-size:14.5px; font-weight:600; margin-top:3px;}
+  .tl-org.o-teal{color:var(--teal);}
+  .tl-org.o-violet{color:var(--violet);}
+  .tl-org.o-amber{color:var(--amber);}
+  .tl-org.o-grey{color:#8b96ab;}
+  .tl-org.o-green{color:#4ade80;}
+
+  .tl-dates{
+    font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--text-dim);
+    background:#0c1119; border:1px solid var(--border); padding:6px 12px; border-radius:100px;
+    white-space:nowrap;
+  }
+  .tl-current{
+    display:inline-flex; align-items:center; gap:6px; margin-top:8px;
+    font-family:'JetBrains Mono', monospace; font-size:11.5px;
+    color:var(--teal); background:rgba(45,212,191,0.08);
+    border:1px solid rgba(45,212,191,0.3); padding:5px 12px; border-radius:100px;
+  }
+  .tl-current .dt{width:6px; height:6px; border-radius:50%; background:var(--teal);}
+
+  .tag{
+    display:inline-block; font-family:'JetBrains Mono', monospace; font-size:11.5px;
+    padding:5px 11px; border-radius:5px; margin:16px 4px 14px 0;
+    border:1px solid; letter-spacing:0.3px;
+  }
+  .tag.t-teal{color:var(--teal); border-color:rgba(45,212,191,0.35); background:rgba(45,212,191,0.06);}
+  .tag.t-violet{color:var(--violet); border-color:rgba(139,124,246,0.35); background:rgba(139,124,246,0.06);}
+  .tag.t-amber{color:var(--amber); border-color:rgba(245,169,78,0.35); background:rgba(245,169,78,0.06);}
+  .tag.t-grey{color:#9aa5ba; border-color:rgba(148,163,184,0.25); background:rgba(148,163,184,0.05);}
+  .tag.t-green{color:#4ade80; border-color:rgba(74,222,128,0.3); background:rgba(74,222,128,0.06);}
+
+  .tl-list{margin-top:6px;}
+  .tl-list li{
+    position:relative; padding-left:18px; font-size:14.5px; color:#c3cbdc;
+    margin-bottom:9px; line-height:1.6;
+  }
+  .tl-list li::before{
+    content:'◆'; position:absolute; left:0; top:2px; font-size:8px; color:var(--teal);
+  }
+  .tl-card.b-violet .tl-list li::before{color:var(--violet);}
+  .tl-card.b-amber .tl-list li::before{color:var(--amber);}
+  .tl-card.b-grey .tl-list li::before{color:#8b96ab;}
+  .tl-card.b-green .tl-list li::before{color:#4ade80;}
+
+  #experience-more{
+    display:grid; grid-template-rows:0fr; overflow:hidden;
+    transition:grid-template-rows .5s ease;
+  }
+  #experience-more.open{grid-template-rows:1fr;}
+  #experience-more > div{
+    overflow:hidden;
+    min-height: 0; /* Important fix for CSS Grid animation in Safari/older Chrome */
+  }
+
+  .show-more-btn{
+    display:flex; align-items:center; gap:8px; margin:8px 0 0 34px;
+    background:transparent; border:1px dashed var(--border); color:var(--text-dim);
+    font-family:'Inter'; font-size:13.5px; font-weight:500; padding:11px 20px;
+    border-radius:9px; cursor:pointer; transition:all .2s ease;
+  }
+  .show-more-btn:hover{border-color:var(--teal-dim); color:var(--teal); background:rgba(45,212,191,0.04);}
+  .show-more-btn svg{transition:transform .3s ease;}
+  .show-more-btn.open svg{transform:rotate(180deg);}
+
+  /* ---------- PROJECTS ---------- */
+  .proj-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;}
+  .proj-card{
+    background:var(--panel-solid); border:1px solid var(--border);
+    border-radius:10px; padding:24px 24px 26px;
+    transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .proj-card:hover{
+    transform:translateY(-5px);
+    border-color:rgba(45,212,191,0.35);
+    box-shadow:0 16px 32px -18px rgba(45,212,191,0.25);
+  }
+  .proj-date{
+    font-family:'JetBrains Mono', monospace; font-size:12px; color:#7d8aa3; margin-bottom:12px;
+  }
+  .proj-title{font-size:16px; font-weight:600; color:var(--text); margin-bottom:16px; line-height:1.4;}
+  .proj-tags{display:flex; flex-wrap:wrap; gap:8px;}
+
+  /* ---------- SKILLS ---------- */
+  .skills-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 60px;}
+  .skill-row{margin-bottom:26px;}
+  .skill-top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:9px;}
+  .skill-name{font-size:14.5px; font-weight:600; color:var(--text);}
+  .skill-yrs{font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--text-dim);}
+  .skill-bar{height:6px; background:#151c29; border-radius:100px; overflow:hidden;}
+  .skill-fill{
+    height:100%; border-radius:100px; width:0%;
+    background:linear-gradient(90deg, var(--teal), var(--violet));
+    transition:width 1.2s cubic-bezier(.19,1,.22,1);
+  }
+
+  .tools-wrap{margin-top:8px;}
+  .tools-list{display:flex; flex-wrap:wrap; gap:11px; margin-top:24px;}
+  .tool-chip{
+    font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#c3cbdc;
+    border:1px solid var(--border); background:#0d1320;
+    padding:9px 16px; border-radius:8px;
+    transition:all .2s ease;
+  }
+  .tool-chip:hover{border-color:var(--violet); color:var(--violet); transform:translateY(-2px);}
+
+  /* ---------- CERTIFICATIONS ---------- */
+  .cert-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:18px;}
+  .cert-card{
+    background:var(--panel-solid); border:1px solid var(--border); border-radius:10px;
+    padding:22px; display:flex; gap:16px; align-items:flex-start;
+    transition:transform .25s ease, border-color .25s ease;
+  }
+  .cert-card:hover{transform:translateY(-3px); border-color:rgba(45,212,191,0.3);}
+  .cert-icon{
+    width:44px; height:44px; border-radius:8px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace; font-weight:700; font-size:10.5px;
+    border:1px solid;
+  }
+  .cert-code{font-family:'JetBrains Mono', monospace; font-size:12.5px; font-weight:500; margin-bottom:5px;}
+  .cert-name{font-size:14px; color:var(--text-dim); line-height:1.5;}
+
+  .edu-card{
+    grid-column:1 / -1; background:var(--panel-solid); border:1px solid var(--border);
+    border-radius:10px; padding:28px 26px; margin-top:2px;
+  }
+  .edu-label{font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:1.5px; color:#7d8aa3; margin-bottom:12px;}
+  .edu-degree{font-size:17px; font-weight:600; color:var(--text); margin-bottom:6px;}
+  .edu-school{font-size:14.5px; color:var(--text-dim);}
+
+  /* ---------- CONTACT ---------- */
+  .contact-panel{
+    text-align:center;
+    background:radial-gradient(ellipse at top, #131c2c, #0e1420 70%);
+    border:1px solid var(--border); border-radius:18px;
+    padding:70px 40px;
+    position:relative; overflow:hidden;
+  }
+  .contact-panel::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 20% 20%, rgba(45,212,191,0.08), transparent 45%),
+               radial-gradient(circle at 80% 80%, rgba(139,124,246,0.08), transparent 45%);
+    pointer-events:none;
+  }
+  .contact-title{
+    font-family:'Space Grotesk', sans-serif; font-weight:700;
+    font-size:clamp(30px, 4vw, 44px); position:relative; z-index:1;
+  }
+  .contact-sub{
+    color:var(--text-dim); font-size:16px; max-width:520px; margin:20px auto 36px;
+    position:relative; z-index:1; line-height:1.7;
+  }
+  .contact-ctas{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1;}
+  .contact-btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:15px 24px; border-radius:9px; font-weight:600; font-size:14.5px;
+    cursor:pointer; border:1px solid var(--border); transition:all .2s ease;
+  }
+  .contact-btn.solid{background:var(--teal); color:#04120f; border-color:var(--teal);}
+  .contact-btn.solid:hover{background:#5eead4;}
+  .contact-btn.outline{background:transparent; color:var(--text);}
+  .contact-btn.outline:hover{border-color:var(--teal-dim); background:rgba(45,212,191,0.05);}
+  .contact-loc{
+    margin-top:26px; font-family:'JetBrains Mono', monospace; font-size:12.5px;
+    color:var(--text-faint); letter-spacing:1px; position:relative; z-index:1;
+  }
+  .copied-note{
+    display:inline-block; margin-left:8px; font-size:12px; color:var(--teal);
+    opacity:0; transition:opacity .2s ease;
+  }
+  .copied-note.show{opacity:1;}
+
+  footer{
+    text-align:center; padding:36px 0 50px; color:var(--text-faint);
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.5px;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:900px){
+    .navlinks{display:none;}
+    .menu-btn{display:flex;}
+    .hero-grid{grid-template-columns:1fr;}
+    .card-grid, .proj-grid, .cert-grid{grid-template-columns:1fr 1fr;}
+    .skills-grid{grid-template-columns:1fr;}
+  }
+  @media (max-width:640px){
+    .wrap{padding:0 20px;}
+    .card-grid, .proj-grid, .cert-grid{grid-template-columns:1fr;}
+    section{padding:76px 0;}
+    .hero{padding:70px 0 50px;}
+    .hero-ctas{flex-direction:column;}
+    .btn{justify-content:center;}
+    .tl-top{flex-direction:column;}
+    nav.navbar{padding:16px 20px;}
+    .mobile-menu.open{display:flex;}
+  }
+
+  /* Desktop Menu Override Fix */
+  @media (min-width: 901px) {
+    .mobile-menu {
+      display: none !important;
+    }
+  }
+
+  .mobile-menu{
+    display:none; position:fixed; top:64px; left:0; right:0; bottom:0; z-index:99;
+    background:rgba(10,14,23,0.98); backdrop-filter:blur(10px);
+    flex-direction:column; padding:20px; gap:4px;
+  }
+  .mobile-menu a{
+    padding:16px 14px; font-size:16px; font-weight:500; color:var(--text-dim);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .mobile-menu a.active{color:var(--teal);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+    html{scroll-behavior:auto;}
+  }
+
+  ::selection{background:rgba(45,212,191,0.3); color:#fff;}
+
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--teal); outline-offset:2px; border-radius:4px;
+  }
+
+  /* ---------- COOKIE CONSENT ---------- */
+  #cookieBanner{
+    position:fixed; left:0; right:0; bottom:0; z-index:200;
+    display:flex; justify-content:center;
+    padding:20px;
+    transform:translateY(120%);
+    transition:transform .5s cubic-bezier(.19,1,.22,1);
+    pointer-events:none;
+  }
+  #cookieBanner.show{transform:translateY(0); pointer-events:auto;}
+  .cookie-card{
+    max-width:640px; width:100%;
+    background:#10161f; border:1px solid var(--border);
+    border-radius:14px; padding:22px 24px;
+    box-shadow:0 20px 50px -20px rgba(0,0,0,0.6);
+    display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+  }
+  .cookie-icon{
+    width:38px; height:38px; border-radius:9px; flex-shrink:0;
+    background:rgba(45,212,191,0.08); border:1px solid rgba(45,212,191,0.3);
+    display:flex; align-items:center; justify-content:center; color:var(--teal);
+  }
+  .cookie-text{flex:1; min-width:200px;}
+  .cookie-text p{font-size:13.5px; color:var(--text-dim); line-height:1.6;}
+  .cookie-text b{color:var(--text);}
+  .cookie-actions{display:flex; gap:10px; flex-shrink:0;}
+  .cookie-btn{
+    font-family:'Inter', sans-serif; font-weight:600; font-size:13px;
+    padding:10px 18px; border-radius:8px; cursor:pointer; border:1px solid transparent;
+    transition:all .2s ease; white-space:nowrap;
+  }
+  .cookie-btn.accept{background:var(--teal); color:#04120f;}
+  .cookie-btn.accept:hover{background:#5eead4;}
+  .cookie-btn.decline{background:transparent; border-color:var(--border); color:var(--text-dim);}
+  .cookie-btn.decline:hover{border-color:var(--text-dim); color:var(--text);}
+  @media (max-width:640px){
+    .cookie-card{flex-direction:column; align-items:flex-start; text-align:left;}
+    .cookie-actions{width:100%;}
+    .cookie-btn{flex:1;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow"></div>
+
+<header>
+  <nav class="navbar">
+    <a href="#about" class="logo">ACD<span>.</span></a>
+    <div class="navlinks" id="navlinks">
+      <a href="#about" class="active">About</a>
+      <a href="#expertise">Expertise</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#certifications">Certifications</a>
+      <a href="#education">Education</a>
+      <a href="#contact">Contact</a>
+      <a href="#" class="resume-dl nav-cv-btn" id="navCvBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download CV
+      </a>
+    </div>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about">About</a>
+    <a href="#expertise">Expertise</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#certifications">Certifications</a>
+    <a href="#education">Education</a>
+    <a href="#contact">Contact</a>
+    <a href="#" class="resume-dl" id="mobileCvBtn" style="color:var(--teal); font-weight:600; margin-top:8px;">Download CV ↓</a>
+  </div>
+</header>
+
+<!-- ================= HERO / ABOUT ================= -->
+<section class="hero" id="about">
+  <div class="wrap">
+    <div class="badge"><span class="dot"></span> AVAILABLE — CALAMBA, LAGUNA, PHILIPPINES</div>
+
+    <div class="hero-grid">
+      <div>
+        <h1 class="name">Allen Clint<br><span class="accent">Dionisio</span></h1>
+        <p class="role">D365 / Power Platform QA Analyst</p>
+        <p class="lede">
+          QA Analyst with <b>6+ years</b> of software testing experience specializing in
+          <span class="hl">Microsoft Dynamics 365 CRM</span> and <span class="hl">Power Platform</span>.
+          Certified across MB-910, PL-200, PL-400, and PL-900. Deep experience in finance &amp; insurance,
+          ERP, and enterprise CRM domains.
+        </p>
+        <div class="hero-ctas">
+          <a href="#experience" class="btn btn-primary">View Experience</a>
+          <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+          <a href="#" class="btn btn-ghost resume-dl" id="heroCvBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CV
+          </a>
+        </div>
+      </div>
+
+      <div class="stat-col">
+        <div class="stat-card reveal"><div class="stat-num" data-count="6" data-suffix="+">0</div><div class="stat-label">Years QA Experience</div></div>
+        <div class="stat-card reveal"><div class="stat-num" data-count="4">0</div><div class="stat-label">Microsoft Certifications</div></div>
+        <div class="stat-card reveal"><div class="stat-num" data-count="6" data-suffix="+">0</div><div class="stat-label">D365 Projects</div></div>
+        <div class="stat-card reveal"><div class="stat-num" data-count="5" data-suffix="+">0</div><div class="stat-label">Industries Served</div></div>
+      </div>
+    </div>
+
+    <div class="scroll-cue"><span>SCROLL</span><span class="line"></span></div>
+  </div>
+</section>
+
+<!-- ================= EXPERTISE ================= -->
+<section id="expertise">
+  <div class="wrap">
+    <div class="eyebrow reveal">CORE EXPERTISE</div>
+    <div class="card-grid">
+      <div class="exp-card c-teal reveal">
+        <div class="icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 3 7l9 5 9-5-9-5Z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg></div>
+        <h3>Microsoft Dynamics 365</h3>
+        <p>CRM, Customer Service, Field Service, <b>Model-Driven &amp; Canvas Apps</b></p>
+      </div>
+      <div class="exp-card c-violet reveal">
+        <div class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 2 12l10 10 10-10L12 2Z"/></svg></div>
+        <h3>Power Platform</h3>
+        <p>PowerApps, Power Automate — <b>PL-200, PL-400, PL-900</b> certified</p>
+      </div>
+      <div class="exp-card c-teal reveal">
+        <div class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></div>
+        <h3>ERP Systems</h3>
+        <p>Microsoft <b>Dynamics NAV 2013/2015/2016/2018</b>, Business Central, Incadea DMS</p>
+      </div>
+      <div class="exp-card c-teal reveal">
+        <div class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg></div>
+        <h3>Finance &amp; Insurance</h3>
+        <p><b>AXA Philippines</b> — functional test analysis in regulated F&amp;I domain</p>
+      </div>
+      <div class="exp-card c-violet reveal">
+        <div class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></div>
+        <h3>QA &amp; Test Management</h3>
+        <p><b>Azure DevOps</b>, JIRA, BrowserStack, Selenium — functional to production</p>
+      </div>
+      <div class="exp-card c-teal reveal">
+        <div class="icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 3 7l9 5 9-5-9-5Z"/><path d="M3 12l9 5 9-5"/></svg></div>
+        <h3>Agile / Scrum</h3>
+        <p>Sprint planning, stand-ups, triage calls, <b>cross-functional collaboration</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXPERIENCE ================= -->
+<section id="experience">
+  <div class="wrap">
+    <div class="eyebrow reveal">PROFESSIONAL EXPERIENCE</div>
+
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <span class="tl-dot d-teal"></span>
+        <div class="tl-card">
+          <div class="tl-top">
+            <div>
+              <div class="tl-role">Functional Test Analyst / QA Analyst</div>
+              <div class="tl-org o-teal">Trinity Workforce — AXA Philippines</div>
+            </div>
+            <div class="tl-dates" title="November 24, 2025 – Present">Nov 2025 – July 2026</div>
+          </div>
+          <span class="tl-current"><span class="dt"></span> Most Recent Employer</span><br>
+          <span class="tag t-teal">INSURANCE DOMAIN EXPERIENCE</span>
+          <ul class="tl-list">
+            <li>Perform functional testing collaborating with Business Analysts and Developers</li>
+            <li>Review business requirements specifications and test cases to ensure coverage</li>
+            <li>Execute test cases, log defects, monitor daily plan reports</li>
+            <li>Participate in daily stand-ups and defect triage sessions</li>
+            <li>Perform Regression Testing, UAT, SIT, Production Testing, Exploratory Testing</li>
+            <li>Create Defect and Test Documentation</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <span class="tl-dot d-violet"></span>
+        <div class="tl-card b-violet">
+          <div class="tl-top">
+            <div>
+              <div class="tl-role">Software QA Analyst</div>
+              <div class="tl-org o-violet">Accenture</div>
+            </div>
+            <div class="tl-dates" title="October 25, 2021 – June 10, 2024">Oct 2021 – Jun 2024</div>
+          </div>
+          <span class="tag t-violet">D365 / CRM / POWER PLATFORM</span>
+          <ul class="tl-list">
+            <li>MS Dynamics 365 CRM and Power Platform testing — functional, regression, API, SIT</li>
+            <li>Created and executed test cases, tracked defects, supported defect triage and retesting</li>
+            <li>Worked across Model-Driven Apps, Canvas Apps, Customer Service, Field Service, portals</li>
+            <li>Reviewed requirements; authored user manuals and troubleshooting guides</li>
+            <li>Collaborated with devs, BAs, and end users — Agile ceremonies throughout</li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="experience-more">
+        <div>
+          <div class="tl-item reveal" style="margin-top:26px;">
+            <span class="tl-dot d-amber"></span>
+            <div class="tl-card b-amber">
+              <div class="tl-top">
+                <div>
+                  <div class="tl-role">IT / CRM Support</div>
+                  <div class="tl-org o-amber">MTI Water Technologies, Inc.</div>
+                </div>
+                <div class="tl-dates">Jan 2021 – Jun 2021</div>
+              </div>
+              <span class="tag t-amber">CRM IMPLEMENTATION</span>
+              <ul class="tl-list">
+                <li>Implemented and configured Zoho One — CRM, Bookkeeping, Projects, Sales IQ, Website</li>
+                <li>Conducted user training; authored user manuals and functional specifications</li>
+                <li>Provided end-user IT support; established company network structure</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tl-item reveal">
+            <span class="tl-dot d-grey"></span>
+            <div class="tl-card b-grey">
+              <div class="tl-top">
+                <div>
+                  <div class="tl-role">IT Staff (Contractual)</div>
+                  <div class="tl-org o-grey">Concentrix</div>
+                </div>
+                <div class="tl-dates">Sep 2020 – Dec 2020</div>
+              </div>
+              <span class="tag t-grey">IT SUPPORT</span>
+              <ul class="tl-list">
+                <li>Documented fixed-asset inventory and provided IT support to end users</li>
+                <li>Performed troubleshooting and hardware setup</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tl-item reveal">
+            <span class="tl-dot d-green"></span>
+            <div class="tl-card b-green">
+              <div class="tl-top">
+                <div>
+                  <div class="tl-role">Functional Consultant</div>
+                  <div class="tl-org o-green">NTT DATA Philippines</div>
+                </div>
+                <div class="tl-dates">Jul 2016 – May 2020</div>
+              </div>
+              <span class="tag t-green">ERP / DYNAMICS NAV</span>
+              <ul class="tl-list">
+                <li>Gathered and analyzed business requirements for Dynamics NAV and Incadea DMS projects</li>
+                <li>Created functional specifications, user manuals, and change requests</li>
+                <li>Performed QA testing on system changes before client presentations</li>
+                <li>Conducted UAT and provided pre/post go-live support</li>
+                <li>Industries: automotive, warehousing, pharmaceutical, shipping</li>
+                <li>Modules &amp; change requests: Vehicle Sales, Cash Advance, Budget, Liquidation</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="show-more-btn" id="showMoreBtn">
+      <span id="showMoreLabel">Show earlier roles (3)</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ================= PROJECTS ================= -->
+<section id="projects">
+  <div class="wrap">
+    <div class="eyebrow reveal">D365 / POWER PLATFORM PROJECTS</div>
+    <div class="proj-grid">
+
+      <div class="proj-card reveal">
+        <div class="proj-date">Dec 2021 – Jan 2022</div>
+        <div class="proj-title">POC Demo Shop – Penn Turnpike</div>
+        <div class="proj-tags">
+          <span class="tag t-teal">PowerApps</span>
+          <span class="tag t-teal">D365 CRM</span>
+          <span class="tag t-teal">Model-Driven App</span>
+          <span class="tag t-teal">Portal Development</span>
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-date">Feb 2022 – Mar 2022</div>
+        <div class="proj-title">NEA D365</div>
+        <div class="proj-tags">
+          <span class="tag t-teal">PowerApps</span>
+          <span class="tag t-teal">D365 CRM</span>
+          <span class="tag t-teal">Field Service</span>
+          <span class="tag t-teal">Chatbot</span> 
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-date">Mar 2022 – May 2022</div>
+        <div class="proj-title">D365 Grant Thornton CRM</div>
+        <div class="proj-tags">
+          <span class="tag t-teal">Functional Testing</span>
+          <span class="tag t-teal">Regression Testing</span>
+          <span class="tag t-teal">UAT / SIT</span>
+          <span class="tag t-teal">Defect Triage</span>
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-date">May 2022 – Nov 2022</div>
+        <div class="proj-title">D365 ANZ Health AU NOM</div>
+        <div class="proj-tags">
+          <span class="tag t-teal">Functional Testing</span>
+          <span class="tag t-teal">Regression Testing</span>
+          <span class="tag t-teal">System Integration Testing</span>
+          <span class="tag t-teal">Test Documentation</span>
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-date">Jan 2023 – May 2023</div>
+        <div class="proj-title">D365 BDO PH CSA Delivery</div>
+        <div class="proj-tags">
+          <span class="tag t-teal">Functional Testing</span>
+          <span class="tag t-teal">Regression Testing</span>
+          <span class="tag t-teal">User Acceptance Testing</span>
+          <span class="tag t-teal">Test Planning</span>
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-date">Jun 2023 – Nov 2023</div>
+        <div class="proj-title">D365 STC-LMS</div>
+        <div class="proj-tags">
+          <span class="tag t-teal">Functional Testing</span>
+          <span class="tag t-teal">Regression Testing</span>
+          <span class="tag t-teal">Test Script Creation</span>
+          <span class="tag t-teal">System Integration Testing</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= SKILLS ================= -->
+<section id="skills">
+  <div class="wrap">
+    <div class="eyebrow reveal">TECHNICAL SKILLS</div>
+
+    <div class="skills-grid">
+      <div>
+        <div class="skill-row reveal" data-pct="90">
+          <div class="skill-top"><span class="skill-name">Functional Testing</span><span class="skill-yrs">6+ yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+        <div class="skill-row reveal" data-pct="90">
+          <div class="skill-top"><span class="skill-name">Regression Testing</span><span class="skill-yrs">6+ yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+        <div class="skill-row reveal" data-pct="48">
+          <div class="skill-top"><span class="skill-name">MS Dynamics 365 CRM</span><span class="skill-yrs">3 yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+        <div class="skill-row reveal" data-pct="88">
+          <div class="skill-top"><span class="skill-name">Production Testing</span><span class="skill-yrs">6 yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+        <div class="skill-row reveal" data-pct="60">
+          <div class="skill-top"><span class="skill-name">JIRA</span><span class="skill-yrs">4 yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+        <div class="skill-row reveal" data-pct="24">
+          <div class="skill-top"><span class="skill-name">API Testing</span><span class="skill-yrs">1+ yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+        <div class="skill-row reveal" data-pct="48">
+          <div class="skill-top"><span class="skill-name">Sales &amp; Customer Service Module</span><span class="skill-yrs">3 yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-row reveal" data-pct="90">
+          <div class="skill-top"><span class="skill-name">Test Case Design &amp; Execution</span><span class="skill-yrs">6+ yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+        <div class="skill-row reveal" data-pct="90">
+          <div class="skill-top"><span class="skill-name">System Integration Testing</span><span class="skill-yrs">6+ yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+        <div class="skill-row reveal" data-pct="90">
+          <div class="skill-top"><span class="skill-name">Defect Triage</span><span class="skill-yrs">6+ yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+        <div class="skill-row reveal" data-pct="48">
+          <div class="skill-top"><span class="skill-name">Azure DevOps</span><span class="skill-yrs">3 yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+        <div class="skill-row reveal" data-pct="34">
+          <div class="skill-top"><span class="skill-name">Microsoft Power Platform</span><span class="skill-yrs">2 yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+        <div class="skill-row reveal" data-pct="24">
+          <div class="skill-top"><span class="skill-name">Selenium Automation</span><span class="skill-yrs">1 yrs</span></div>
+          <div class="skill-bar"><div class="skill-fill"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tools-wrap reveal">
+      <div class="eyebrow" style="margin-bottom:0;">TOOLS &amp; PLATFORMS</div>
+      <div class="tools-list">
+        <span class="tool-chip">Azure DevOps</span>
+        <span class="tool-chip">JIRA</span>
+        <span class="tool-chip">BrowserStack</span>
+        <span class="tool-chip">Selenium (Basic)</span>
+        <span class="tool-chip">Playwright (Basic)</span>
+        <span class="tool-chip">PowerApps</span>
+        <span class="tool-chip">Microsoft Visio</span>
+        <span class="tool-chip">SQL Server</span>
+        <span class="tool-chip">MS Office</span>
+        <span class="tool-chip">Kanban</span>
+        <span class="tool-chip">Zoho One</span>
+        <span class="tool-chip">C# .NET (Beginner)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CERTIFICATIONS ================= -->
+<section id="certifications">
+  <div class="wrap">
+    <div class="eyebrow reveal">CERTIFICATIONS</div>
+
+    <div class="cert-grid">
+      <div class="cert-card reveal">
+        <div class="cert-icon" style="border-color:rgba(45,212,191,0.4); color:var(--teal); background:rgba(45,212,191,0.06);">MB-910</div>
+        <div>
+          <div class="cert-code" style="color:var(--teal);">MB-910</div>
+          <div class="cert-name">Microsoft Certified: Dynamics 365 Fundamentals (CRM)</div>
+        </div>
+      </div>
+      <div class="cert-card reveal">
+        <div class="cert-icon" style="border-color:rgba(139,124,246,0.4); color:var(--violet); background:rgba(139,124,246,0.06);">PL-200</div>
+        <div>
+          <div class="cert-code" style="color:var(--violet);">PL-200</div>
+          <div class="cert-name">Microsoft Certified: Power Platform Functional Consultant Associate</div>
+        </div>
+      </div>
+      <div class="cert-card reveal">
+        <div class="cert-icon" style="border-color:rgba(245,169,78,0.4); color:var(--amber); background:rgba(245,169,78,0.06);">PL-900</div>
+        <div>
+          <div class="cert-code" style="color:var(--amber);">PL-900</div>
+          <div class="cert-name">Microsoft Certified: Power Platform Fundamentals</div>
+        </div>
+      </div>
+      <div class="cert-card reveal">
+        <div class="cert-icon" style="border-color:rgba(45,212,191,0.4); color:var(--teal); background:rgba(45,212,191,0.06);">PL-400</div>
+        <div>
+          <div class="cert-code" style="color:var(--teal);">PL-400</div>
+          <div class="cert-name">Microsoft Certified: Power Platform Developer</div>
+        </div>
+      </div>
+      <div class="cert-card reveal">
+        <div class="cert-icon" style="border-color:rgba(148,163,184,0.35); color:#9aa5ba; background:rgba(148,163,184,0.05);">EFSET</div>
+        <div>
+          <div class="cert-code" style="color:#9aa5ba;">EFSET C1</div>
+          <div class="cert-name">EFSET English Certificate — C1 Advanced</div>
+        </div>
+      </div>
+    </div> <!-- FIXED CLOSING TAG -->
+  </div>
+</section>
+
+<!-- ================= EDUCATION ================= -->
+<section id="education">
+  <div class="wrap">
+    <div class="eyebrow reveal">EDUCATION</div>
+    <div class="edu-card reveal">
+      <div class="edu-label">ACADEMIC BACKGROUND</div>
+      <div class="edu-degree">Bachelor of Computer Science in System Software</div>
+      <div class="edu-school">Asia Pacific College &middot; 2012&ndash;2015</div>
+      <div class="edu-school" style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border-soft);">
+        <span style="color:var(--text);">Associate in Computer Technology, System Software Engineering</span><br>Asia Pacific College &middot; 2011&ndash;2012
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section id="contact">
+  <div class="wrap">
+    <div class="eyebrow reveal">CONTACT</div>
+
+    <div class="contact-panel reveal">
+      <h2 class="contact-title">Let's work together</h2>
+      <p class="contact-sub">Open to D365, Power Platform QA, and functional testing roles. Available for interview within 1–2 days notice.</p>
+      <div class="contact-ctas">
+        <!-- EMAIL OBFUSCATION (Anti-Scraping Security) -->
+        <button class="contact-btn solid" id="emailBtn" data-em1="aadionisio7" data-em2="gmail.com">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
+          <span id="emailText">Email Me</span>
+          <span class="copied-note" id="copiedNote">Copied!</span>
+        </button>
+        <a href="tel:+639567343906" class="contact-btn outline" rel="noopener noreferrer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+          +63 956 734 3906
+        </a>
+        <a href="#" class="contact-btn outline resume-dl" id="contactCvBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download CV (PDF)
+        </a>
+      </div>
+      <div class="contact-loc">CALAMBA, LAGUNA, PHILIPPINES</div>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 ALLEN CLINT DIONISIO — BUILT WITH CARE</footer>
+
+
+<script>
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navA = document.querySelectorAll('.navlinks a');
+  const mobA = document.querySelectorAll('.mobile-menu a');
+
+  function setActive(id){
+    navA.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+id));
+    mobA.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+id));
+  }
+
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) setActive(entry.target.id);
+    });
+  }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+  sections.forEach(s => navObserver.observe(s));
+
+  // Mobile menu toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+  mobA.forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('open')));
+
+  // Reveal on scroll
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  // FIX: Time-based Animated counters (ensures animation plays correctly for small numbers)
+  const counters = document.querySelectorAll('.stat-num');
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const el = entry.target;
+        const target = parseInt(el.dataset.count, 10);
+        const suffix = el.dataset.suffix || '';
+        
+        const duration = 1500; // 1.5 seconds animation
+        let startTimestamp = null;
+
+        const step = (timestamp) => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          el.textContent = Math.floor(progress * target) + suffix;
+          if (progress < 1) {
+            window.requestAnimationFrame(step);
+          }
+        };
+        
+        window.requestAnimationFrame(step);
+        counterObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(c => counterObserver.observe(c));
+
+  // Animated skill bars
+  const skillRows = document.querySelectorAll('.skill-row');
+  const skillObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const fill = entry.target.querySelector('.skill-fill');
+        fill.style.width = entry.target.dataset.pct + '%';
+        skillObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  skillRows.forEach(r => skillObserver.observe(r));
+
+  // Show more experience
+  const showMoreBtn = document.getElementById('showMoreBtn');
+  const experienceMore = document.getElementById('experience-more');
+  const showMoreLabel = document.getElementById('showMoreLabel');
+  showMoreBtn.addEventListener('click', () => {
+    const open = experienceMore.classList.toggle('open');
+    showMoreBtn.classList.toggle('open', open);
+    showMoreLabel.textContent = open ? 'Hide earlier roles' : 'Show earlier roles (3)';
+  });
+
+  // SECURITY FIX: Copy email to clipboard with Obfuscation (Anti-Scraping)
+  const emailBtn = document.getElementById('emailBtn');
+  const emailTextDisplay = document.getElementById('emailText');
+  const copiedNote = document.getElementById('copiedNote');
+  
+  // Reconstruct email from data attributes to hide from basic bots
+  const part1 = emailBtn.getAttribute('data-em1');
+  const part2 = emailBtn.getAttribute('data-em2');
+  const realEmail = part1 + '@' + part2;
+  
+  // Show it in the UI once JS loads
+  emailTextDisplay.textContent = realEmail;
+
+  emailBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(realEmail).then(() => {
+      copiedNote.classList.add('show');
+      setTimeout(() => copiedNote.classList.remove('show'), 1600);
+    }).catch(() => {
+      window.location.href = 'mailto:' + realEmail;
+    });
+  });
+
+  // Resume download — external PDF for reliable iOS Safari and GitHub Pages support.
+  const RESUME_FILENAME = "Resume_Allen_Clint_Dionisio.pdf";
+  document.querySelectorAll('.resume-dl').forEach(el => {
+    el.setAttribute('href', RESUME_FILENAME);
+    el.setAttribute('download', RESUME_FILENAME);
+  });
+
+
+</script>
+
+</body>
+</html>
